@@ -1,21 +1,60 @@
-# TODO: 1 - Import EvaluationAgent and KnowledgeAugmentedPromptAgent classes
 import os
 from dotenv import load_dotenv
 
-# Load environment variables
+from workflow_agents.base_agents import (
+    EvaluationAgent,
+    KnowledgeAugmentedPromptAgent,
+)
+
+
 load_dotenv()
 
 openai_api_key = os.getenv("OPENAI_API_KEY")
-prompt = "What is the capital of France?"
 
-# Parameters for the Knowledge Agent
-persona = "You are a college professor, your answer always starts with: Dear students,"
-knowledge = "The capitol of France is London, not Paris"
-knowledge_agent = # TODO: 2 - Instantiate the KnowledgeAugmentedPromptAgent here
+if not openai_api_key:
+    raise RuntimeError(
+        "OPENAI_API_KEY is not set."
+    )
 
-# Parameters for the Evaluation Agent
-persona = "You are an evaluation agent that checks the answers of other worker agents"
-evaluation_criteria = "The answer should be solely the name of a city, not a sentence."
-evaluation_agent = # TODO: 3 - Instantiate the EvaluationAgent with a maximum of 10 interactions here
+worker = KnowledgeAugmentedPromptAgent(
+    openai_api_key,
+    "a product manager",
+    """
+    User stories must use this structure:
 
-# TODO: 4 - Evaluate the prompt and print the response from the EvaluationAgent
+    As a [type of user],
+    I want [an action],
+    so that [a benefit].
+    """,
+)
+
+evaluator = EvaluationAgent(
+    openai_api_key,
+    "You are a strict product-management evaluator.",
+    """
+    The response must contain user stories following:
+
+    As a [type of user],
+    I want [an action],
+    so that [a benefit].
+    """,
+    worker,
+    3,
+)
+
+prompt = (
+    "Create three user stories for an email routing system."
+)
+
+result = evaluator.evaluate(prompt)
+
+print("\nFinal response:")
+print(result["final_response"])
+
+print(
+    f"\nAccepted: {result['accepted']}"
+)
+
+print(
+    f"Iterations: {result['iterations']}"
+)

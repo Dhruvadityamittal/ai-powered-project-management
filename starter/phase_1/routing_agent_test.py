@@ -1,9 +1,7 @@
 import os
 from dotenv import load_dotenv
 
-from workflow_agents.base_agents import (
-    RoutingAgent,
-)
+from workflow_agents.base_agents import RoutingAgent
 
 
 load_dotenv()
@@ -18,22 +16,22 @@ if not openai_api_key:
 
 def product_manager(query):
     return (
-        "Product Manager handled the task:\n"
-        f"{query}"
+        "Product Manager selected.\n"
+        f"Task: {query}"
     )
 
 
 def program_manager(query):
     return (
-        "Program Manager handled the task:\n"
-        f"{query}"
+        "Program Manager selected.\n"
+        f"Task: {query}"
     )
 
 
 def development_engineer(query):
     return (
-        "Development Engineer handled the task:\n"
-        f"{query}"
+        "Development Engineer selected.\n"
+        f"Task: {query}"
     )
 
 
@@ -43,35 +41,39 @@ agent.agents = [
     {
         "name": "Product Manager",
         "description": (
-            "Defines users, personas, requirements, "
-            "and user stories."
+            "Defines user personas and user stories."
         ),
         "func": product_manager,
     },
     {
         "name": "Program Manager",
         "description": (
-            "Defines product features and groups "
-            "related user stories."
+            "Defines product features."
         ),
         "func": program_manager,
     },
     {
         "name": "Development Engineer",
         "description": (
-            "Defines detailed technical engineering "
-            "tasks required to build the product."
+            "Defines detailed engineering tasks."
         ),
         "func": development_engineer,
     },
 ]
 
 query = (
-    "Create detailed engineering tasks "
-    "for implementing email filtering."
+    "Define the technical development tasks "
+    "required to implement the email router."
 )
+
+print("Testing RoutingAgent")
+print(f"Query: {query}")
 
 result = agent.route(query)
 
-print("\nRouting result:")
+print("\nResult:")
 print(result)
+
+print(
+    "\nRoutingAgent test completed successfully."
+)

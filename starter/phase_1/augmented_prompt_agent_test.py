@@ -14,8 +14,7 @@ if not openai_api_key:
     )
 
 persona = (
-    "a senior technical project manager "
-    "who explains technical concepts clearly"
+    "a senior technical project manager"
 )
 
 agent = AugmentedPromptAgent(
@@ -24,11 +23,18 @@ agent = AugmentedPromptAgent(
 )
 
 prompt = (
-    "Explain why breaking a large project into "
-    "smaller tasks is useful."
+    "Explain the importance of clear acceptance criteria."
 )
+
+print("Testing AugmentedPromptAgent")
+print(f"Persona: {persona}")
+print(f"Prompt: {prompt}")
 
 response = agent.respond(prompt)
 
-print("\nAgent response:")
+print("\nResponse:")
 print(response)
+
+print(
+    "\nAugmentedPromptAgent test completed successfully."
+)

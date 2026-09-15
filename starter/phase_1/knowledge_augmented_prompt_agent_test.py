@@ -15,22 +15,14 @@ if not openai_api_key:
         "OPENAI_API_KEY is not set."
     )
 
-persona = (
-    "a product manager"
-)
+persona = "a product manager"
 
 knowledge = """
-A user story describes a product requirement
-from the perspective of a user.
-
-A good user story follows this structure:
+A user story should follow this format:
 
 As a [type of user],
-I want [an action or feature],
-so that [benefit or value].
-
-User stories should describe a specific capability
-and the value that capability provides.
+I want [an action],
+so that [a benefit].
 """
 
 agent = KnowledgeAugmentedPromptAgent(
@@ -40,10 +32,21 @@ agent = KnowledgeAugmentedPromptAgent(
 )
 
 prompt = (
-    "Write three user stories for an email routing product."
+    "Create two user stories for an email router."
 )
+
+print(
+    "Testing KnowledgeAugmentedPromptAgent"
+)
+
+print(f"Prompt: {prompt}")
 
 response = agent.respond(prompt)
 
-print("\nAgent response:")
+print("\nResponse:")
 print(response)
+
+print(
+    "\nKnowledgeAugmentedPromptAgent "
+    "test completed successfully."
+)
