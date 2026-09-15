@@ -11,9 +11,7 @@ load_dotenv()
 openai_api_key = os.getenv("OPENAI_API_KEY")
 
 if not openai_api_key:
-    raise RuntimeError(
-        "OPENAI_API_KEY is not set."
-    )
+    raise RuntimeError("OPENAI_API_KEY is not set.")
 
 persona = "a product manager"
 
@@ -35,18 +33,34 @@ prompt = (
     "Create two user stories for an email router."
 )
 
-print(
-    "Testing KnowledgeAugmentedPromptAgent"
-)
+print("=" * 70)
+print("KNOWLEDGE AUGMENTED PROMPT AGENT TEST")
+print("=" * 70)
 
-print(f"Prompt: {prompt}")
+print("\nScript: knowledge_augmented_prompt_agent_test.py")
+
+print("\nPersona:")
+print(persona)
+
+print("\nPrompt:")
+print(prompt)
+
+print("\nSupplied knowledge:")
+print(knowledge)
+
+print(
+    "\nKnowledge source confirmation: "
+    "KnowledgeAugmentedPromptAgent uses the supplied knowledge "
+    "as its permitted knowledge source. The system prompt instructs "
+    "the agent to use this knowledge and not rely on previous "
+    "conversational context."
+)
 
 response = agent.respond(prompt)
 
-print("\nResponse:")
+print("\nAgent response:")
 print(response)
 
 print(
-    "\nKnowledgeAugmentedPromptAgent "
-    "test completed successfully."
+    "\nKnowledgeAugmentedPromptAgent test completed successfully."
 )

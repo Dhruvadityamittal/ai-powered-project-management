@@ -9,13 +9,9 @@ load_dotenv()
 openai_api_key = os.getenv("OPENAI_API_KEY")
 
 if not openai_api_key:
-    raise RuntimeError(
-        "OPENAI_API_KEY is not set."
-    )
+    raise RuntimeError("OPENAI_API_KEY is not set.")
 
-persona = (
-    "a senior technical project manager"
-)
+persona = "a senior technical project manager"
 
 agent = AugmentedPromptAgent(
     openai_api_key,
@@ -26,15 +22,34 @@ prompt = (
     "Explain the importance of clear acceptance criteria."
 )
 
-print("Testing AugmentedPromptAgent")
-print(f"Persona: {persona}")
-print(f"Prompt: {prompt}")
+print("=" * 70)
+print("AUGMENTED PROMPT AGENT TEST")
+print("=" * 70)
+
+print("\nScript: augmented_prompt_agent_test.py")
+
+print("\nPersona:")
+print(persona)
+
+print("\nPrompt:")
+print(prompt)
+
+print(
+    "\nKnowledge source: AugmentedPromptAgent uses the LLM's "
+    "general knowledge. No external knowledge or retrieval source "
+    "is provided."
+)
+
+print(
+    "\nPersona impact: The system prompt establishes the agent as "
+    "a senior technical project manager, which guides the response "
+    "to emphasize professional project-management practices, "
+    "perspective, and terminology."
+)
 
 response = agent.respond(prompt)
 
-print("\nResponse:")
+print("\nAgent response:")
 print(response)
 
-print(
-    "\nAugmentedPromptAgent test completed successfully."
-)
+print("\nAugmentedPromptAgent test completed successfully.")

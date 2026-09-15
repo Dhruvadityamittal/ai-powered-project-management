@@ -9,9 +9,7 @@ load_dotenv()
 openai_api_key = os.getenv("OPENAI_API_KEY")
 
 if not openai_api_key:
-    raise RuntimeError(
-        "OPENAI_API_KEY is not set."
-    )
+    raise RuntimeError("OPENAI_API_KEY is not set.")
 
 agent = DirectPromptAgent(openai_api_key)
 
@@ -20,11 +18,16 @@ prompt = (
     "in one short paragraph."
 )
 
-response = agent.respond(prompt)
+print("=" * 70)
+print("DIRECT PROMPT AGENT TEST")
+print("=" * 70)
 
-print("Testing DirectPromptAgent")
-print(f"Script: direct_prompt_agent_test.py")
-print(f"Prompt: {prompt}")
+print("\nScript: direct_prompt_agent_test.py")
+
+print("\nPrompt:")
+print(prompt)
+
+response = agent.respond(prompt)
 
 print("\nAgent response:")
 print(response)
