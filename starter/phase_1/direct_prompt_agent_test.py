@@ -22,5 +22,17 @@ prompt = (
 
 response = agent.respond(prompt)
 
+print("Testing DirectPromptAgent")
+print(f"Script: direct_prompt_agent_test.py")
+print(f"Prompt: {prompt}")
+
 print("\nAgent response:")
 print(response)
+
+print(
+    "\nKnowledge source: DirectPromptAgent used the general knowledge "
+    "encoded in the selected LLM model because no persona, external "
+    "knowledge, retrieval step, or system prompt was provided."
+)
+
+print("\nDirectPromptAgent test completed successfully.")
