@@ -414,11 +414,27 @@ print(
     "\n*** Final workflow output ***\n"
 )
 
-if completed_steps:
-    print(
-        completed_steps[-1]
-    )
-else:
-    print(
-        "No workflow results were produced."
-    )
+# if completed_steps:
+#     print(
+#         completed_steps[-1]
+#     )
+# else:
+#     print(
+#         "No workflow results were produced."
+#     )
+
+workflow_prompt = (
+    "Create a complete Email Router project plan with three sections: "
+    "user stories, product features, and detailed engineering tasks. "
+    "Use the Product-Spec-Email-Router document as the source of truth."
+)
+
+final_report = ["# Email Router Project Plan", ""]
+for index, result in enumerate(completed_steps, start=1):
+    final_report.append(f"## Workflow Result {index}")
+    final_report.append(result)
+    final_report.append("")
+
+print("\n ***Final workflow output*** \n")
+print("\n".join(final_report))
+
