@@ -495,131 +495,37 @@ class RoutingAgent:
         self.openai_api_key = openai_api_key
         self.agents = []
 
+    def get_embedding(self, text: str):
+        client = _client(self.openai_api_key)
+        response = client.embeddings.create(
+            model="text-embedding-3-large",
+            input=text,
+            encoding_format="float",
+        )
+        return response.data[0].embedding
+
+    def calculate_similarity(self, vector_one, vector_two):
+        vec1 = np.asarray(vector_one)
+        vec2 = np.asarray(vector_two)
+        return float(np.dot(vec1, vec2) / (np.linalg.norm(vec1) * np.linalg.norm(vec2)))
+
     def route(self, query: str):
         if not self.agents:
-            raise ValueError(
-                "No agents have been configured "
-                "for the RoutingAgent."
-            )
+            raise ValueError("No agents have been configured for the RoutingAgent.")
 
-        client = _client(self.openai_api_key)
-
-        agent_descriptions = "\n".join(
-            [
-                (
-                    f"{i + 1}. {agent['name']}: "
-                    f"{agent['description']}"
-                )
-                for i, agent in enumerate(self.agents)
-            ]
-        )
-
-        routing_prompt = (
-            "Choose the single most appropriate agent "
-            "for the following task.\n\n"
-            f"Task:\n{query}\n\n"
-            "Available agents:\n"
-            f"{agent_descriptions}\n\n"
-            "Return only the exact agent name."
-        )
-
-        response = client.chat.completions.create(
-            model=os.getenv(
-                "OPENAI_CHAT_MODEL",
-                "gpt-3.5-turbo",
-            ),
-            messages=[
-                {
-                    "role": "system",
-                    "content": (
-                        "You are a routing agent. "
-                        "Route each task to the most "
-                        "appropriate specialist."
-                    ),
-                },
-                {
-                    "role": "user",
-                    "content": routing_prompt,
-                },
-            ],
-            temperature=0,
-        )
-
-        selected_name = (
-            response.choices[0]
-            .message.content
-            .strip()
-        )
-
-        selected_agent = None
+        query_embedding = self.get_embedding(query)
+        best_agent = None
+        best_score = -1.0
 
         for agent in self.agents:
-            if (
-                agent["name"].lower()
-                in selected_name.lower()
-                or selected_name.lower()
-                in agent["name"].lower()
-            ):
-                selected_agent = agent
-                break
+            description_embedding = self.get_embedding(agent["description"])
+            score = self.calculate_similarity(query_embedding, description_embedding)
+            if score > best_score:
+                best_score = score
+                best_agent = agent
 
-        if selected_agent is None:
-            # Safe fallback: ask the model again with
-            # numbered choices if the name was malformed.
-            fallback_prompt = (
-                "Return ONLY one integer representing "
-                "the best agent choice.\n\n"
-                f"Task: {query}\n\n"
-                f"{agent_descriptions}"
-            )
-
-            fallback_response = (
-                client.chat.completions.create(
-                    model=os.getenv(
-                        "OPENAI_CHAT_MODEL",
-                        "gpt-3.5-turbo",
-                    ),
-                    messages=[
-                        {
-                            "role": "system",
-                            "content": (
-                                "You are a precise routing "
-                                "classifier."
-                            ),
-                        },
-                        {
-                            "role": "user",
-                            "content": fallback_prompt,
-                        },
-                    ],
-                    temperature=0,
-                )
-            )
-
-            match = re.search(
-                r"\d+",
-                fallback_response.choices[0]
-                .message.content,
-            )
-
-            if match:
-                index = int(match.group()) - 1
-
-                if 0 <= index < len(self.agents):
-                    selected_agent = self.agents[index]
-
-        if selected_agent is None:
-            raise RuntimeError(
-                "RoutingAgent could not identify "
-                "a valid specialist."
-            )
-
-        print(
-            f"Routing task to: "
-            f"{selected_agent['name']}"
-        )
-
-        return selected_agent["func"](query)
+        print(f"Routing task to: {best_agent['name']} with similarity {best_score:.4f}")
+        return best_agent["func"](query)
 
 
 class ActionPlanningAgent:
